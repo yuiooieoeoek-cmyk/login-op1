@@ -1,5 +1,5 @@
 <?php
-// Set timezone to your zone, so it works with your time for others or use Universal time zone (UTC)--- this time zone will make menu expire same time for all users across the world
+// Set timezone to UTC to make menu expire same time for all users across the world
 date_default_timezone_set("UTC");
 
 // Get POST values
@@ -12,29 +12,33 @@ if (empty($username) || empty($password)) {
     exit;
 }
 
-// Hardcoded accounts with expiration
+// Hardcoded accounts with expiration - ONLY ALI~BN
 $accounts = [
-    "ALI~BN" => [
-        "password" => "ALI~BN", 
+    "ALI~BN1" => [
+        "password" => "ALI~BN1", 
         "expires" => "2025-08-29 23:59:59"
-    ],
-    "PremiumUser" => [
-        "password" => "BNteam1", 
-        "expires" => "2025-08-29 23:59:59"
-    ],
-    "FreeUser" => [
-        "password" => "BNteam1", 
-        "expires" => "2025-08-29 00:00:00"
-    ],
-    "BetaTest" => [
-        "password" => "BNteam1", 
-        "expires" => "2025-08-29 12:00:00"
     ]
 ];
 
 if (isset($accounts[$username])) {
     $userData = $accounts[$username];
     $correctPass = $userData["password"];
+    $expiresStr = $userData["expires"];
+    $expires = strtotime($expiresStr);
+    $now = time();
+
+    if ($password !== $correctPass) {
+        echo "wrong_pass";
+    } else if ($now > $expires) {
+        echo "expired";
+    } else {
+        // Return status, expiration time, and server time (all in UTC)
+        echo "valid|$expiresStr|server=" . date("Y-m-d H:i:s");
+    }
+} else {
+    echo "not_found";
+}
+?>    $correctPass = $userData["password"];
     $expiresStr = $userData["expires"];
     $expires = strtotime($expiresStr);
     $now = time();
